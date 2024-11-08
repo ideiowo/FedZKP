@@ -3,6 +3,8 @@ data/
 ZKP_test1/
 ZKP_test2/
 ZKP_ROOT/
+ZKP_CIFAR10/
+ZKP_LeNet5/
 ZKP/
 Fedavg/
 test/
