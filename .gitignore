@@ -2,9 +2,12 @@
 data/
 ZKP_test1/
 ZKP_test2/
+ZKP_ROOT/
+ZKP/
 Fedavg/
 test/
 gradients/
+output/
 
 
 # 忽略特定檔案類型
