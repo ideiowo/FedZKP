@@ -1,0 +1,50 @@
+[
+    {
+        "index": 0,
+        "previous_hash": "0",
+        "timestamp": 1728229391.354621,
+        "zk_proof_hash": "0",
+        "zk_proof_location": "0",
+        "num_clients": 0,
+        "rounds": 0,
+        "epochs": 0,
+        "batch_size": 0,
+        "learning_rate": 0.0,
+        "node_id": "0",
+        "gradient_hash": "0",
+        "gradient_location": "0",
+        "hash": "40f5711136a6e2773a6bfc7fabe8d842eabe586fcedd991a9e29147720d310d5"
+    },
+    {
+        "index": 1,
+        "previous_hash": "40f5711136a6e2773a6bfc7fabe8d842eabe586fcedd991a9e29147720d310d5",
+        "timestamp": 1728229391.354621,
+        "zk_proof_hash": "0",
+        "zk_proof_location": "initial_proof_location",
+        "num_clients": 10,
+        "rounds": 200,
+        "epochs": 1,
+        "batch_size": 64,
+        "learning_rate": 0.001,
+        "node_id": 0,
+        "gradient_hash": "0",
+        "gradient_location": "initial_gradient_location",
+        "hash": "f9cbde3f5f47570975dc959705ea4db18706ab330a1fd7b603ce974726e7d171"
+    },
+    {
+        "index": 2,
+        "previous_hash": "f9cbde3f5f47570975dc959705ea4db18706ab330a1fd7b603ce974726e7d171",
+        "timestamp": 1728229403.7978528,
+        "zk_proof_hash": "53b3fe4bf80588de0ea0ed597d4f7addc56ae53a5fc6210d960801322a3229cd",
+        "zk_proof_location": "./gradients/round1/proof.json",
+        "num_clients": 10,
+        "rounds": 1,
+        "epochs": 1,
+        "batch_size": 64,
+        "learning_rate": 0.001,
+        "node_id": 0,
+        "gradient_hash": "0d344afc39b2d328f4b8e8d6767c234c7a86f06cb86d75bbfc9d6abfb9cfdbdd",
+        "gradient_location": "./gradients/round1\\public.json",
+        "hash": "d3ca1e6f47a04afa77f1787bfdc8f976ae2e62c1dfa3e3f905a93dc2cc398107"
+    }
+]

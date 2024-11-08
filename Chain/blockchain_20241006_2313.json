@@ -1,0 +1,34 @@
+[
+    {
+        "index": 0,
+        "previous_hash": "0",
+        "timestamp": 1728227634.5096483,
+        "zk_proof_hash": "0",
+        "zk_proof_location": "0",
+        "num_clients": 0,
+        "rounds": 0,
+        "epochs": 0,
+        "batch_size": 0,
+        "learning_rate": 0.0,
+        "node_id": "0",
+        "gradient_hash": "0",
+        "gradient_location": "0",
+        "hash": "f117abead3ea972203eba4877ce4899b53cd059443e64959781bff276955fd04"
+    },
+    {
+        "index": 1,
+        "previous_hash": "f117abead3ea972203eba4877ce4899b53cd059443e64959781bff276955fd04",
+        "timestamp": 1728227634.5096483,
+        "zk_proof_hash": "0",
+        "zk_proof_location": "initial_proof_location",
+        "num_clients": 10,
+        "rounds": 200,
+        "epochs": 1,
+        "batch_size": 64,
+        "learning_rate": 0.001,
+        "node_id": 0,
+        "gradient_hash": "0",
+        "gradient_location": "initial_gradient_location",
+        "hash": "daa3e877d7e3b3f7f8b9729151154b2567a1f094f353b503217c3323516d5738"
+    }
+]

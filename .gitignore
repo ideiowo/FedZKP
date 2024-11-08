@@ -1,0 +1,11 @@
+# 忽略特定資料夾
+data/
+ZKP_test1/
+ZKP_test2/
+Fedavg/
+test/
+gradients/
+
+
+# 忽略特定檔案類型
+*.ipynb
