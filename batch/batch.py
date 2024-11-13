@@ -187,6 +187,29 @@ def compute_R_MAXS(client_gradients, bit_width=8):
     
     return R_MAXS
 
+def compute_R_MAXS_from_layer_stats(layer_stats, bit_width=8):
+    """
+    根據 layer_stats 計算 R_MAXS。
+
+    :param layer_stats: 每層的統計資訊，包括最大值、最小值和尺寸
+    :param bit_width: 量化的位元寬度，預設為 8
+    :return: R_MAXS 字典，包含各層的 R_MAXS 值
+    """
+    R_MAXS = {}
+    for name, stats in layer_stats.items():
+        max_value = max(stats['max_values'])
+        min_value = min(stats['min_values'])
+        layer_size = stats['size']
+        
+        # 計算剪枝閾值（clipping_threshold）
+        clipping_threshold = _calculate_clipping_threshold(
+            max_value, min_value, layer_size, bit_width
+        )
+        
+        R_MAXS[name] = clipping_threshold * len(stats['max_values'])  # 乘以客戶端數量
+    return R_MAXS
+
+
 def _calculate_clipping_threshold(max_value, min_value, values_size, num_bits):
     """
     使用 ACIQ 方法計算最佳剪枝閾值（適合的 alpha 值）

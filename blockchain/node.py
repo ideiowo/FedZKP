@@ -404,7 +404,6 @@ class Node:
 
         return delta_params, train_loss
 
-
     def train_exdp_clamp(self, epochs=1, N=10, epsilon=0.013, bit_width=16):
         """
         使用指數機制（ExDP）對梯度進行差分隱私訓練，
@@ -453,6 +452,9 @@ class Node:
                 batch_gradients_list = [current_gradients]
                 R_MAXS = compute_R_MAXS(batch_gradients_list, bit_width=bit_width)
 
+                # 取得當前批次的大小（批次大小 B）
+                batch_size = data.shape[0]
+
                 # 對每個參數進行剪裁和指數機制的梯度擾動
                 for name, param in self.model.named_parameters():
                     if param.grad is None:
@@ -492,10 +494,10 @@ class Node:
                     # 計算距離 d，這裡使用絕對值差異
                     distances = torch.abs(current_grad.unsqueeze(0) - S)
                     
-                    # 使用剪裁範圍作為敏感度 delta_g
+                    # 使用剪裁範圍作為敏感度 delta_g，並除以批次大小 batch_size
                     if max_value is not None and max_value > 0:
-                        delta_g = 2 * max_value  # 敏感度為剪裁範圍的兩倍
-                       
+                        delta_g =  max_value / batch_size  # 敏感度為剪裁範圍除以批次大小
+                    
                     else:
                         print(f"警告：層 {name} 的 max_value 無效，將跳過此層的擾動。")
                         continue
@@ -544,7 +546,7 @@ class Node:
             if param.requires_grad:
                 delta_params[name] = param.clone().detach().to(self.device) - initial_params[name]
 
-        return delta_params, train_loss                                                                                     
+        return delta_params, train_loss
 
     def train_clamp(self, epochs=1, bit_width=16):
         """
@@ -879,7 +881,7 @@ class Node:
         # 計算剪裁範圍 R_MAXS，使用 dACIQ 方法
         current_clipped_update = current_model_updates  # 移除列表包裹，使其保持字典結構
         R_MAXS = compute_R_MAXS([current_clipped_update], bit_width=bit_width)  # 注意這裡的參數仍然需要列表
-        print(R_MAXS)
+        
         # 剪裁模型更新，使用 R_MAXS 作為敏感度
         for name in current_clipped_update:
             max_value = R_MAXS.get(name, None)
@@ -887,6 +889,9 @@ class Node:
                 current_clipped_update[name] = torch.clamp(current_clipped_update[name], min=-max_value, max=max_value)
             else:
                 print(f"警告：層 {name} 沒有裁剪閾值，將跳過此層的裁剪。")
+        
+        # 取得當前批次的大小（批次大小 B）
+        batch_size = data.shape[0]
         
         # 對剪裁後的模型更新應用指數機制
         perturbed_model_updates = {}
@@ -931,7 +936,7 @@ class Node:
             max_value = R_MAXS.get(name, None)
 
             # 使用剪裁範圍作為敏感度 delta_u
-            delta_u = 2 * max_value  # 敏感度為裁剪範圍的兩倍
+            delta_u = max_value / batch_size  # 敏感度為剪裁範圍除以批次大小
 
             # 計算擾動概率
             exponent = - (epsilon / (2 * delta_u)) * distances  # 形狀：(N, num_elements)
@@ -1077,14 +1082,14 @@ class Node:
 
         return perturbed_model_updates, train_loss
 
-    def verify_proof(self, snarkjs_path, zkey_path, public_file_path, proof_file_path):
+    def verify_proof(self, snarkjs_path, verification_key_path, public_file_path, proof_file_path):
         if self.role != 'replica':
             print(f"Node {self.node_id} is not a replica node and cannot verify proofs.")
             return self.node_id, False, "Not a replica node"
 
         try:
             result = subprocess.run(
-                [snarkjs_path, "groth16", "verify", zkey_path, public_file_path, proof_file_path],
+                [snarkjs_path, "groth16", "verify", verification_key_path, public_file_path, proof_file_path],
                 check=True, text=True, capture_output=True
             )
             clean_output = remove_ansi_escape_sequences(result.stdout.strip())
@@ -1177,7 +1182,7 @@ class Node:
 
         proof_file_path, public_file_path = result
 
-        return public_file_path
+        return proof_file_path, public_file_path
 
     def get_global_model(self):
         if self.global_model is None:

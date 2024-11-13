@@ -6,7 +6,7 @@ from blockchain.node import Node  # 從 blockchain 資料夾中引入 Node 類
 from blockchain.blockchain import Blockchain  # 確保引入 Blockchain 類別
 from blockchain.consensus import Consensus  # 引入 Consensus 類別
 from utils.data_utils import load_MNIST, load_FMNIST, load_CIFAR10
-from models.architecture import DNN, CNN, LeNet5, LeNet5_CIFAR10, SqueezeNet_CIFAR10, ResNet20, CustomCNN
+from models.architecture import DNN, CNN, LeNet5, LeNet5_CIFAR10
 from batch import batch_process_gradients, compute_R_MAXS
 import numpy as np
 import subprocess
@@ -41,7 +41,7 @@ def rotate_primary(round_number, total_nodes):
 
 # 聯邦學習設定參數
 NUM_NODES = 11  # 節點數量，包括主節點和副本節點
-ROUNDS = 125
+ROUNDS = 150
 EPOCHS = 1
 BATCH_SIZE = 64
 LEARNING_RATE = 0.001
@@ -132,7 +132,7 @@ for round in range(ROUNDS):
     for node in nodes:
         if node.role == 'replica':
             print(f"Training node {node.node_id}...")
-            gradients, train_loss = node.train(epochs=EPOCHS)
+            gradients, train_loss = node.train_model_exdp(epochs=EPOCHS)
             client_gradients.append(gradients)
 
     # 主節點進行聚合
@@ -145,7 +145,7 @@ for round in range(ROUNDS):
         processed_gradients = batch_process_gradients(client_gradients, bit_width=16, r_maxs=R_MAXS, batch_size=13, pad_zero=3)
         
         # 主節點生成零知識證明
-        public_file_path = primary_node.generate_zero_knowledge_proof(round, processed_gradients, snarkjs_path, wasm_path, zkey_path)
+        proof_file_path, public_file_path = primary_node.generate_zero_knowledge_proof(round, processed_gradients, snarkjs_path, wasm_path, zkey_path)
         primary_node.batch_aggregate(processed_gradients, public_file_path, lr=LEARNING_RATE, bit_width=16, r_maxs=R_MAXS, batch_size=13, pad_zero=3)
         
         # 輸出每一層的 R_MAXS 值
@@ -190,7 +190,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # 在所有訓練迴圈結束後，將結果寫入文件
-results_path = os.path.join(output_dir, 'CIFAR10_clamp.csv')
+results_path = os.path.join(output_dir, 'CIFAR10_100_modeldp.csv')
 with open(results_path, 'w') as f:
     f.write('Round,Accuracy,Average Loss\n')
     for round_num, accuracy, average_loss in results:

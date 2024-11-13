@@ -82,7 +82,7 @@ class LeNet5_CIFAR10(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
-        return x  # 移除 F.log_softmax
+        return x
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
@@ -275,7 +275,7 @@ class CustomCNN(nn.Module):
 if __name__ == "__main__":
     # 創建模型實例
     dnn_model = DNN()
-    cnn_model = CNN()
+    cnn_model = CustomCNN()
     lenet5_model = LeNet5()
     lenet5_cifar_model = LeNet5_CIFAR10()
     resnet_cifar_model = ResNet20()
@@ -285,7 +285,7 @@ if __name__ == "__main__":
     print("DNN Model Parameters:")
     print_model_parameters(dnn_model)
 
-    print("\nCNN Model Parameters:")
+    print("\CustomCNN Model Parameters:")
     print_model_parameters(cnn_model)
 
     print("\nLeNet5 Model Parameters:")
